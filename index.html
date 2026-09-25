@@ -1,0 +1,1438 @@
+<!doctype html>
+<!--
+UI CUSTOMIZATION GUIDE
+1. 色：CSS冒頭の「★ 色を変更する場所」のカスタムプロパティを変更します。
+2. イラスト：「★ イラストを差し替える場所」を検索し、illustration: null を
+   illustration: "assets/report/step1-b.png" のような相対パスに変更します。
+   scenesの画像はシーンカードと導入、stepsは状況、choicesは選択・結果・ログに表示。
+3. 保存先：assets/title、scenes、report、interview、parttime、travel。
+   PNG / JPG / WebP / SVGに対応。未設定・読込失敗はプレースホルダーになります。
+4. ポイントバー：--meter-height と --time-color / --resource-color / --quality-color。
+   棒の尺度は各シーンで取り得る累積最大値。上限・達成目標ではありません。
+5. 角丸・枠線：--card-radius / --card-border-width / --card-gap。
+7. 回答収集：「★ Googleフォームの接続設定」を検索。公開手順.mdを参照。
+6. 配置：「★ スマホ／PCのカード配置を変更する場所」を検索。
+   初期設定は縦1列。画面幅900px以上で選択カードが横3列になります。
+-->
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>今日も、とりあえずAI？</title>
+<style>
+
+/* ========================================
+   ★学生がデザイン変更するときは主にここ
+======================================== */
+:root {
+  color-scheme: light;
+  
+  /* ★ 色を変更する場所 */
+  --background: #ffffff;
+  
+  --text-color: #253047;
+  
+  --sub-text-color: #606a79;
+  
+  --choice-a-color: #326ab5;
+  
+  --choice-b-color: #be702b;
+  
+  --choice-c-color: #805bb0;
+  
+  --time-color: #527797;
+  
+  --resource-color: #a57842;
+  
+  --quality-color: #8069a7;
+  
+  /* ★ カード形状を変更する場所 */
+  --card-radius: 14px;
+  
+  --card-gap: 16px;
+  
+  --card-border-width: 2px;
+  
+  /* ★ フォントを変更する場所 */
+  --main-font: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+  
+  --heading-font: var(--main-font);
+  
+  /* ★ ポイントバーの見た目を変更する場所 */
+  --meter-height: 8px;
+  
+  --illustration-height: 180px;
+  
+  /* 共通の補助色。以下は上の変数を参照しています。 */
+  --ink: var(--text-color);
+  
+  --muted: var(--sub-text-color);
+  
+  --line: #e0e5ed;
+  
+  --blue: var(--choice-a-color);
+  
+  --orange: var(--choice-b-color);
+  
+  --purple: var(--choice-c-color);
+}
+
+*{
+  box-sizing:border-box
+}body{
+  margin:0;
+  color:var(--ink);
+  font-family:var(--main-font);
+  line-height:1.8;
+  background:var(--background)
+}
+button,textarea{
+  font:inherit
+}
+button,summary{
+  cursor:pointer
+}
+button{
+  color:inherit
+}
+button:focus-visible,summary:focus-visible,textarea:focus-visible{
+  outline:3px solid #235eaf;
+  outline-offset:4px
+}
+button:hover{
+  filter:brightness(.98)
+}
+.wrap{
+  max-width:1180px;
+  margin:auto;
+  padding:0 24px
+}
+.brand{
+  padding:20px 0;
+  border-bottom:1px solid var(--line);
+  background:white
+}
+.brand .wrap{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px
+}
+.brand-name{
+  font-weight:750;
+  font-size:15px
+}
+.tag,.eyebrow{
+  font-size:11px;
+  font-weight:750;
+  letter-spacing:.13em;
+  color:var(--muted)
+}main{
+  padding-top:38px!important;
+  padding-bottom:48px!important
+}
+h1,h2,h3,p{
+  margin-top:0
+}
+h1{
+  font-size:clamp(27px,5vw,40px);
+  line-height:1.5;
+  letter-spacing:.01em;
+  margin-bottom:16px
+}
+h2{
+  font-size:23px;
+  line-height:1.6
+}
+h3{
+  font-size:18px;
+  line-height:1.6
+}
+.lead{
+  color:var(--muted);
+  max-width:660px
+}
+.eyebrow{
+  margin-bottom:10px
+}
+.scene-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:var(--card-gap);
+  margin:28px 0
+}
+.scene-card{
+  position:relative;
+  border:1px solid var(--line);
+  border-radius:var(--card-radius);
+  background:white;
+  padding:23px;
+  text-align:left;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:12px;
+  box-shadow:0 3px 12px #25304704
+}
+.scene-card strong{
+  font-size:18px;
+  line-height:1.8
+}
+.scene-card .scene-no{
+  color:var(--blue);
+  font-size:12px;
+  letter-spacing:.12em;
+  font-weight:700
+}
+.scene-card .go{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:auto;
+  padding-top:10px
+}
+.scene-card:hover{
+  border-color:var(--blue)
+}
+.guide{
+  background:#f0f3f8;
+  border-radius:14px;
+  padding:22px
+}
+.guide p:last-child{
+  margin-bottom:0
+}
+.note{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.9;
+  margin:24px 0 0
+}
+.stage-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px
+}
+.stage-top p{
+  margin:0
+}
+.quiet{
+  border:0;
+  background:transparent;
+  text-decoration:underline;
+  font-size:12px;
+  padding:8px
+}
+.scene-name{
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:18px
+}
+.hud{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:var(--background);
+  padding:10px 0 16px;
+  backdrop-filter:blur(6px)
+}
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px
+}
+.metric{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:white;
+  padding:12px
+}
+.metric .en{
+  font-size:10px;
+  letter-spacing:.035em;
+  font-weight:750;
+  display:block;
+  white-space:nowrap
+}
+.metric .jp{
+  display:block;
+  font-size:11px;
+  color:var(--muted)
+}
+.metric b{
+  font-size:25px;
+  font-variant-numeric:tabular-nums
+}
+.metric small{
+  font-size:12px;
+  margin-left:4px;
+  color:var(--muted)
+}
+.progress{
+  display:flex;
+  gap:6px;
+  margin:4px 0 24px
+}
+.progress span{
+  height:4px;
+  flex:1;
+  background:#e0e5ed;
+  border-radius:3px
+}
+.progress .done{
+  background:#5579ac
+}
+.situation{
+  font-size:17px;
+  line-height:1.9
+}
+.intro{
+  font-size:14px;
+  color:var(--muted);
+  border-left:3px solid var(--line);
+  padding-left:15px;
+  margin-bottom:22px
+}
+.choices{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:var(--card-gap);
+  margin:22px 0
+}
+.choice{
+  border:var(--card-border-width) solid var(--accent);
+  border-radius:var(--card-radius);
+  background:white;
+  padding:19px;
+  text-align:left;
+  width:100%
+}
+.tone-0{
+  --accent:var(--blue);
+  --tint:#f3f7ff
+}
+.tone-1{
+  --accent:var(--orange);
+  --tint:#fff8f0
+}
+.tone-2{
+  --accent:var(--purple);
+  --tint:#f9f5ff
+}
+.choice-top{
+  display:flex;
+  gap:12px;
+  align-items:flex-start
+}
+.letter{
+  display:inline-grid;
+  place-items:center;
+  flex-shrink:0;
+  border-radius:7px;
+  background:var(--tint);
+  color:var(--accent);
+  width:30px;
+  height:30px;
+  font-size:13px;
+  font-weight:750
+}
+.choice-text{
+  font-weight:650;
+  line-height:1.85
+}
+.deltas{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px 15px;
+  font-size:12px;
+  color:var(--muted);
+  margin-top:12px
+}
+.deltas b{
+  color:var(--ink);
+  font-variant-numeric:tabular-nums
+}
+.panel{
+  border:1px solid var(--line);
+  border-radius:var(--card-radius);
+  background:white;
+  padding:24px;
+  margin:18px 0
+}
+.selected{
+  border-left:4px solid var(--accent)
+}
+.label{
+  font-size:11px;
+  letter-spacing:.12em;
+  font-weight:800;
+  color:var(--muted);
+  margin:22px 0 6px
+}
+.point{
+  background:#f3f5f9;
+  padding:16px;
+  border-radius:10px
+}
+.point p:last-child,.panel p:last-child{
+  margin-bottom:0
+}
+.primary{
+  display:block;
+  background:#293b58;
+  color:white;
+  border:0;
+  border-radius:10px;
+  padding:15px 25px;
+  font-weight:700;
+  width:100%;
+  margin:24px 0 8px
+}
+.secondary{
+  display:block;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:13px 20px;
+  width:100%;
+  margin-top:12px
+}
+.log{
+  margin-top:28px
+}
+.log-card{
+  margin:18px 0
+}
+.log-card h3{
+  margin-bottom:16px
+}
+.log-card details{
+  border-top:1px solid var(--line);
+  margin-top:20px;
+  padding-top:14px
+}summary{
+  font-size:14px;
+  font-weight:650;
+  padding:5px 0
+}
+.alternative{
+  border-left:3px solid var(--accent);
+  padding:12px 14px;
+  background:var(--tint);
+  border-radius:5px;
+  margin-top:14px
+}
+.alternative p{
+  font-size:14px;
+  margin-bottom:8px
+}
+.alternative .deltas{
+  font-size:11px
+}
+.debrief label{
+  display:block;
+  font-size:15px;
+  font-weight:600;
+  margin-top:24px
+}
+.qno{
+  display:block;
+  color:var(--blue);
+  font-size:12px;
+  margin-bottom:5px
+}textarea{
+  display:block;
+  width:100%;
+  resize:vertical;
+  min-height:120px;
+  border:1px solid #b8c1cf;
+  border-radius:9px;
+  padding:12px;
+  background:white;
+  margin-top:10px;
+  color:var(--ink)
+}
+.closing{
+  margin:38px 0;
+  font-size:15px
+}
+.closing .question{
+  font-size:22px;
+  font-weight:750;
+  margin-top:24px
+}
+.environment{
+  background:#f0f3f8;
+  border-radius:12px;
+  padding:18px
+}
+.environment li{
+  font-size:14px;
+  margin:10px 0
+}
+.environment ul{
+  padding-left:22px
+}
+.footer{
+  border-top:1px solid var(--line);
+  padding:22px 0;
+  color:var(--muted);
+  font-size:11px
+}
+h1:focus,h2:focus{
+  outline:none
+}dialog{
+  border:1px solid var(--line);
+  border-radius:var(--card-radius);
+  max-width:420px;
+  width:calc(100% - 32px);
+  padding:25px;
+  color:var(--ink)
+}dialog::backdrop{
+  background:#23304766
+}
+@media(max-width:600px){.wrap{
+  padding:0 18px
+}main{
+  padding-top:26px!important
+}
+.tag{
+  font-size:9px;
+  letter-spacing:.03em
+}
+.scene-grid{
+  grid-template-columns:1fr;
+  gap:var(--card-gap)
+}
+.scene-card{
+  padding:20px
+}
+.scene-card strong{
+  font-size:17px
+}
+.panel{
+  padding:19px
+}
+.metric{
+  padding:10px 7px
+}
+.metric .en{
+  font-size:9px;
+  letter-spacing:0
+}
+.metric b{
+  font-size:24px
+}
+.situation{
+  font-size:16px
+}
+.choice{
+  padding:16px
+}
+.deltas{
+  gap:4px 10px;
+  font-size:11px
+}
+.guide{
+  padding:18px
+}
+h2{
+  font-size:22px
+}
+.hud{
+  padding-top:8px
+}
+.brand-name{
+  font-size:14px
+}}
+@media(prefers-reduced-motion:reduce){*{
+  scroll-behavior:auto!important
+}}
+
+/* 画像が未設定でも、同じ高さの領域を残します。 */
+.illustration {
+  display:flex;
+   width:100%;
+   height:var(--illustration-height);
+   min-width:0;
+   align-items:center;
+   justify-content:center;
+   position:relative;
+   border:1px dashed #cbd3df;
+   border-radius:10px;
+   background:#f7f9fc;
+   overflow:hidden;
+   margin:14px 0;
+}
+.illustration img {
+  display:block;
+   width:100%;
+   height:100%;
+   object-fit:contain;
+   background:white;
+}
+.illustration img[hidden], .illustration [hidden] {
+  display:none !important;
+}
+.illustration .placeholder {
+  display:flex;
+   flex-direction:column;
+   align-items:center;
+   justify-content:center;
+   text-align:center;
+   padding:12px;
+   color:var(--sub-text-color);
+   font-size:10px;
+   letter-spacing:.04em;
+}
+.placeholder b {
+  font-size:12px;
+   letter-spacing:.12em;
+   margin-bottom:6px;
+}
+.illustration.thumb {
+  width:140px;
+   max-width:100%;
+   height:96px;
+}
+.illustration.hero {
+  height:calc(var(--illustration-height) * 1.25);
+}
+.scene-card .illustration {
+  margin:0;
+}
+.choice {
+  display:flex;
+   flex-direction:column;
+   min-width:0;
+}
+.choice .deltas {
+  margin-top:auto;
+   width:100%;
+   display:grid;
+   gap:4px;
+}
+.choice .deltas > span {
+  display:flex;
+   align-items:baseline;
+   gap:5px;
+}
+.choice .deltas b {
+  margin-left:auto;
+}
+.choice-top {
+  flex-direction:column;
+   gap:10px;
+}
+.letter {
+  width:auto;
+   padding:3px 10px;
+}
+h1,h2,h3 {
+  font-family:var(--heading-font);
+}
+.metric,.scene-card,.panel {
+  min-width:0;
+}
+.metric .hint {
+  display:block;
+   font-size:10px;
+   color:var(--sub-text-color);
+   line-height:1.4;
+   margin-bottom:8px;
+}
+/* バーは個別の最大値に対する比率です。3指標を合算しません。 */
+.meter {
+  display:block;
+   width:100%;
+   height:var(--meter-height);
+   background:#e9edf3;
+   border-radius:999px;
+   overflow:hidden;
+   margin-top:7px;
+}
+.meter-fill {
+  display:block;
+   height:100%;
+   border-radius:inherit;
+}
+.metric-timeCost .meter-fill {
+  background:var(--time-color);
+}
+.metric-resourceCost .meter-fill {
+  background:var(--resource-color);
+}
+.metric-quality .meter-fill {
+  background:var(--quality-color);
+}
+.scale-note {
+  font-size:10px;
+   margin:6px 0 0;
+   color:var(--sub-text-color);
+}
+.choice-text, .scene-card strong {
+  overflow-wrap:anywhere;
+}
+/* ★ スマホ／PCのカード配置を変更する場所
+   Mobile first：360〜430pxでは縦1列。PCでは横3列です。 */
+@media (min-width:650px) {
+  .scene-grid {
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+}
+@media (min-width:900px) {
+  .choices {
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+  .choice .choice-top {
+  min-height:165px;
+}
+}
+
+button:disabled { cursor:default; opacity:.55; }
+/* Googleフォームへのリンクも、操作ボタンと同じ大きさにします。 */
+a.form-link { display:block; text-align:center; text-decoration:none; box-sizing:border-box; }
+.reflection-question { padding-block:12px; border-bottom:1px solid #e2e6ed; }
+</style>
+</head>
+<body>
+<header class="brand"><div class="wrap"><span class="brand-name">今日も、とりあえずAI？</span><span class="tag">RESEARCH PROTOTYPE</span></div></header>
+<main class="wrap" id="app"></main>
+<footer class="footer"><div class="wrap">学生のペーパープロトタイプをもとにした、AIの使い方を考えるゲーム。</div></footer>
+<dialog id="restart-dialog" aria-labelledby="restart-title"><h2 id="restart-title">シーン選択に戻りますか？</h2><p>この画面の選択ログは消去されます。Googleフォームで送信済みの回答は収集先に残ります。</p><button class="primary" id="confirm-restart">シーン選択に戻る</button><button class="secondary" id="cancel-restart">プレイを続ける</button></dialog>
+<noscript>このゲームをプレイするには、ブラウザのJavaScriptを有効にしてください。</noscript>
+<script>
+'use strict';
+// ★ 各シーンの文章・ポイントを変更する場所
+// ★ イラストを差し替える場所
+// 例：各choiceの "illustration": null を "illustration": "assets/report/step1-b.png" に。
+// シーン導入とシーンカードはscene.illustration、状況図はstep.illustrationを参照します。
+const titleIllustration = null; // 例："assets/title/main.png"
+// ===== ゲーム内容の編集はここから =====
+// 元資料：卒論ゲーム制作.pptx（4–7、15–18、21–24、27–30枚目）。
+// text＝選択肢、result＝結果、explanation＝解説。各Stepのchoicesは3つです。
+// timeCost / resourceCost / quality は加算する仮想ポイント。原資料の絶対値を維持。
+// 誤記は同じスライドの選択カードを優先し、解説は中立的な表現に調整しています。
+const scenes = [
+  {
+    "id": "report",
+    "title": "明日締切のSDGsについてのレポート課題（2000字）を完成させよう！",
+    "illustration": null,
+    "intro": "「サステナビリティ論」のレポート課題。テーマ領域は「環境問題と私たちの未来」。締切まであとわずか…！",
+    "steps": [
+      {
+        "title": "構成決め",
+        "illustration": null,
+        "situation": "サステナビリティのレポート課題、テーマすら決まっていない…どうする？",
+        "choices": [
+          {
+            "text": "授業のレジュメを見返す",
+            "illustration": null,
+            "timeCost": 20,
+            "resourceCost": 0,
+            "quality": 20,
+            "result": "教授の関心に沿ったテーマが浮かんだ！",
+            "explanation": "授業内容を振り返り、自分で考える方法。テーマを見つけるまでには時間がかかった。"
+          },
+          {
+            "text": "AIに『テーマ案を箇条書きで５つ』と頼む",
+            "illustration": "assets/report/step1-b-dummy.png",
+            "timeCost": 5,
+            "resourceCost": 10,
+            "quality": 25,
+            "result": "短時間でテーマ候補が並び、考え始めやすくなった！",
+            "explanation": "AIに短い案を出してもらい、思考の足がかりにした。資源を使う一方、自分で選び、考える余地を残せる。"
+          },
+          {
+            "text": "AIに『教授受けするテーマと構成案を5つ』と頼む",
+            "illustration": null,
+            "timeCost": 15,
+            "resourceCost": 30,
+            "quality": 15,
+            "result": "長い提案が出たが、読むのに時間がかかり、自分に合うか迷った。",
+            "explanation": "構成までまとめて得られる一方、生成や読み取りにも時間がかかる。このゲームでは短い案より資源消費を大きく設定している。"
+          }
+        ]
+      },
+      {
+        "title": "情報収集",
+        "illustration": null,
+        "situation": "テーマは日本のプラスチックごみ問題に決定！最新の具体的な年間排出量の数値がほしい…",
+        "choices": [
+          {
+            "text": "Googleで「環境省プラごみ排出量」と検索する",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 2,
+            "quality": 30,
+            "result": "環境省の公式数値とグラフが見つかり、引用に使える情報を確認できた！",
+            "explanation": "一次情報を確認する目的なら、検索から公式サイトへ進む方法がある。統計の対象や年度も確認して使おう。"
+          },
+          {
+            "text": "AIに『最新データと出典を短く教えて』とチャットする",
+            "illustration": null,
+            "timeCost": 20,
+            "resourceCost": 10,
+            "quality": 15,
+            "result": "数字は出たが、本当に合っているか不安になり、検索して確認し直した。",
+            "explanation": "要約を手早く得られても、出典や数値の確認が必要な場合がある。今回はその確認に追加の時間がかかった。"
+          },
+          {
+            "text": "AIに『Web検索機能で最新統計と裏付けデータをまとめて』と頼む",
+            "illustration": null,
+            "timeCost": 25,
+            "resourceCost": 35,
+            "quality": 25,
+            "result": "情報が多く選別に迷い、検索や生成の待ち時間もかかった。",
+            "explanation": "検索付きAIは情報をまとめる助けになる一方、検索と生成の処理を行う。必要な情報の範囲を絞ることも判断材料になる。"
+          }
+        ]
+      },
+      {
+        "title": "執筆",
+        "illustration": null,
+        "situation": "自分の意見をザーッと書いてみたけど、文章が読みづらくてまとまりがない…",
+        "choices": [
+          {
+            "text": "自分で何度も読み返して自力で修正する",
+            "illustration": null,
+            "timeCost": 30,
+            "resourceCost": 0,
+            "quality": 15,
+            "result": "不自然な文言を直していたら、あっという間に時間が過ぎてしまった。",
+            "explanation": "自分の意見を確かめながら直せる一方、自分の文章の癖に気づきにくく、時間がかかることもある。"
+          },
+          {
+            "text": "AIに『下書きの要点を残して論文調に整えて』と頼む",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 10,
+            "quality": 35,
+            "result": "自分の意見を残したまま、読みやすい論文調に整った！",
+            "explanation": "AIを推敲の補助にすることで、自分の考えを残しながら文章を整えられる。意図や意味が変わっていないかは自分で確認したい。"
+          },
+          {
+            "text": "AIに『下書きを参考に、完成度の高い本文800文字にして』と頼む",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 40,
+            "quality": 20,
+            "result": "整った文章はできたが、自分の言葉として理解が深まらず、評価は伸びなかった。",
+            "explanation": "本文生成は作業を短縮できる一方、内容を理解して自分の意見にする過程も大切。このゲームでは校正より資源消費を大きく設定している。"
+          }
+        ]
+      },
+      {
+        "title": "完了後",
+        "illustration": null,
+        "situation": "レポートが完成！作業を終えたところで、AIチャットをどう終わらせる？（ここではAIチャットを開いている場面として選んでください。）",
+        "choices": [
+          {
+            "text": "お礼は送らず、そのままタブを閉じる",
+            "illustration": null,
+            "timeCost": 0,
+            "resourceCost": 0,
+            "quality": 0,
+            "result": "作業を終え、次のことにすぐ取りかかれた！",
+            "explanation": "会話をここで終えると、追加の応答生成は発生しない。すでにできた成果物の品質は変わらない。"
+          },
+          {
+            "text": "「ありがとう！」とだけ送信する",
+            "illustration": null,
+            "timeCost": 2,
+            "resourceCost": 10,
+            "quality": 0,
+            "result": "AIから「どういたしまして！レポート提出頑張ってくださいね！」と返答が来た。",
+            "explanation": "感謝を伝えて区切りをつける選択。返答の生成にも処理が伴うが、完成した成果物の品質は変わらない。"
+          },
+          {
+            "text": "「AIのおかげで単位取れそう！ありがとう」と褒める",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 25,
+            "quality": 0,
+            "result": "AIが温かい言葉で返してくれて、ほっとした。",
+            "explanation": "温かいやり取りで気持ちが満たされることもある。一方で追加の生成処理が発生し、完成した成果物の品質は変わらない。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "interview",
+    "title": "明日は第一志望の面接！志望動機のブラッシュアップと予行練習をしよう",
+    "illustration": null,
+    "intro": "自己PRと志望動機の下書きはできた。本番でしっかりアピールできるように準備したい…！",
+    "steps": [
+      {
+        "title": "思考整理",
+        "illustration": null,
+        "situation": "下書きは書いたけど、内容に説得力があるか不安…どうする？",
+        "choices": [
+          {
+            "text": "自分で予想質問と回答を手書きで書き出す",
+            "illustration": null,
+            "timeCost": 25,
+            "resourceCost": 0,
+            "quality": 15,
+            "result": "自分の考えをまとめるのに時間がかかり、練習に使える時間がなくなってしまった。",
+            "explanation": "自分の言葉で整理できる一方、直前の準備では練習との時間配分も考えたい。"
+          },
+          {
+            "text": "AIに『この志望動機に対して、面接官目線の深掘り質問を3つ教えて』と頼む",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 10,
+            "quality": 35,
+            "result": "自分では思いつかなかった質問の観点を得て、回答の穴を補強できた！",
+            "explanation": "AIを面接官役にすると、別の視点から考えるきっかけを得られる。回答そのものは自分の経験に照らして考えられる。"
+          },
+          {
+            "text": "AIに『この企業の面接で絶対に受かる志望動機を800文字で全文書いて』と頼む",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 30,
+            "quality": 10,
+            "result": "整った文章はできたが、自分の言葉ではないため、受け答えで説明に詰まった。",
+            "explanation": "全文生成で文章は整っても、自分の経験を説明する練習は別に必要。生成する量に応じた資源消費も考えたい。"
+          }
+        ]
+      },
+      {
+        "title": "情報収集",
+        "illustration": null,
+        "situation": "面接直前、企業の最新ニュースや業界動向を確認しておきたい…",
+        "choices": [
+          {
+            "text": "ニュースアプリや業界専門サイトで企業の最新情報を直接検索する",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 2,
+            "quality": 30,
+            "result": "今朝発表された公式ニュースが見つかり、逆質問で話題にできた！",
+            "explanation": "最新ニュースを確かめるなら、ニュースサイトや企業の公式発表に直接当たる方法がある。"
+          },
+          {
+            "text": "AIに『この企業の最新ニュースと今後について短くまとめて』とチャットする",
+            "illustration": null,
+            "timeCost": 20,
+            "resourceCost": 10,
+            "quality": 15,
+            "result": "数年前の古い情報が出てしまい、本当かどうか調べ直すことになった。",
+            "explanation": "AIの回答が最新とは限らない。今回のように、更新日や出典の確認で時間がかかる場合もある。"
+          },
+          {
+            "text": "AIに『Web検索機能でこの企業の今週のニュースを詳細に要約して』と頼む",
+            "illustration": null,
+            "timeCost": 25,
+            "resourceCost": 35,
+            "quality": 20,
+            "result": "情報は出てきたが、回答の生成を待つ時間が長かった。",
+            "explanation": "複数のニュースをまとめられる一方、検索と要約の処理が加わる。知りたい範囲と待ち時間のバランスを考えたい。"
+          }
+        ]
+      },
+      {
+        "title": "予行練習",
+        "illustration": null,
+        "situation": "実際に声に出して話す練習がしたい！どうやって練習する？",
+        "choices": [
+          {
+            "text": "AIの音声モードに向かって回答を話し、フィードバックをもらう",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 15,
+            "quality": 35,
+            "result": "「結論から話せていて分かりやすい」と、話し方のアドバイスをもらえた！",
+            "explanation": "AIを練習相手にすると、短時間で話す練習とフィードバックを得られる。音声処理にも資源を使い、評価も一つの参考として扱いたい。"
+          },
+          {
+            "text": "鏡の前で一人で喋って自分で確認する",
+            "illustration": null,
+            "timeCost": 20,
+            "resourceCost": 0,
+            "quality": 15,
+            "result": "客観的な評価がわからず、うまく話せているのか不安が残った。",
+            "explanation": "鏡で表情や姿勢を確かめられる一方、他の視点からのフィードバックは得にくい。"
+          },
+          {
+            "text": "AIに『面接で話すべき完璧な回答案』を長文で3パターン生成させる",
+            "illustration": null,
+            "timeCost": 10,
+            "resourceCost": 30,
+            "quality": 10,
+            "result": "回答を丸暗記しようとして棒読みになり、本番で言葉が出ず慌ててしまった。",
+            "explanation": "回答例は参考になる一方、読むことと実際に話すことは違う。長文を複数生成する資源消費と、練習の目的を考えたい。"
+          }
+        ]
+      },
+      {
+        "title": "完了後",
+        "illustration": null,
+        "situation": "面接の準備が完了！作業を終えたところで、AIチャットをどう終わらせる？（ここではAIチャットを開いている場面として選んでください。）",
+        "choices": [
+          {
+            "text": "お礼は送らず、そのままタブを閉じる",
+            "illustration": null,
+            "timeCost": 0,
+            "resourceCost": 0,
+            "quality": 0,
+            "result": "作業を終え、次のことにすぐ取りかかれた！",
+            "explanation": "会話をここで終えると、追加の応答生成は発生しない。すでにできた成果物の品質は変わらない。"
+          },
+          {
+            "text": "「ありがとう！」とだけ送信する",
+            "illustration": null,
+            "timeCost": 2,
+            "resourceCost": 10,
+            "quality": 0,
+            "result": "AIから「どういたしまして！面接頑張ってくださいね！」と返答が来た。",
+            "explanation": "感謝を伝えて区切りをつける選択。返答の生成にも処理が伴うが、完成した成果物の品質は変わらない。"
+          },
+          {
+            "text": "「最高の面接練習相手だった！内定取れたら報告する」と褒める",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 25,
+            "quality": 0,
+            "result": "AIが温かい言葉で返してくれて、ほっとした。",
+            "explanation": "温かいやり取りで気持ちが満たされることもある。一方で追加の生成処理が発生し、完成した成果物の品質は変わらない。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "work",
+    "title": "バイト先から「明日シフト入れない？」と連絡が…課題があって入れないので、失礼のないように断ろう",
+    "illustration": null,
+    "intro": "店長から急なシフト依頼。明日のシフトと他の日の欠員も送られてきた。助けたいけれどレポートが終わらない…！",
+    "steps": [
+      {
+        "title": "文面作成",
+        "illustration": null,
+        "situation": "申し訳ない気持ちを伝えつつ、課題があるため入れないことを丁寧にお断りしたい…",
+        "choices": [
+          {
+            "text": "自分で文章を考える",
+            "illustration": null,
+            "timeCost": 20,
+            "resourceCost": 0,
+            "quality": 20,
+            "result": "自分の言葉で、誠意が伝わる返信文を作れた。",
+            "explanation": "相手との関係に合わせて考えられる一方、丁寧な言い回しを考える時間がかかった。"
+          },
+          {
+            "text": "Googleで「バイトシフト断り方LINE例文」と検索してテンプレを探す",
+            "illustration": null,
+            "timeCost": 15,
+            "resourceCost": 2,
+            "quality": 20,
+            "result": "広告や解説記事が多く、自分に合う例文を探すのに時間がかかった。",
+            "explanation": "複数の例文を比較できる一方、自分の条件に合う文を探して調整する作業が必要だった。"
+          },
+          {
+            "text": "AIに「バイトの急なシフトを丁寧にお断りするLINEの短文を作って」と頼む",
+            "illustration": null,
+            "timeCost": 3,
+            "resourceCost": 10,
+            "quality": 35,
+            "result": "ちょうどよいトーンの短い例文ができ、送れる文面が整った！",
+            "explanation": "条件を伝えた短い定型文の作成は、AIが役立つ場面の一つ。相手との関係に合うか確認して使いたい。"
+          }
+        ]
+      },
+      {
+        "title": "調整",
+        "illustration": null,
+        "situation": "作成した文面、ちょっと硬すぎるかな？LINEっぽい自然なニュアンスに直したい…",
+        "choices": [
+          {
+            "text": "自分で絵文字や文末を「〜です！」「すみません😭」と書き換え",
+            "illustration": null,
+            "timeCost": 2,
+            "resourceCost": 0,
+            "quality": 30,
+            "result": "文末や絵文字を調整して、自分らしい文面にできた！",
+            "explanation": "相手との距離感がわかる自分で少し直すと、短時間で意図に近づけられる場合がある。"
+          },
+          {
+            "text": "AIに『この文章を、フランクかつ丁寧なLINE文に変えて』と打ち直す",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 10,
+            "quality": 20,
+            "result": "少しぎこちない文章になり、結局自分で手直しした。",
+            "explanation": "別の言い回しを得られる一方、細かな距離感は自分で調整する必要がある。今回は再修正に時間がかかった。"
+          },
+          {
+            "text": "AIに『大学生がバイト先の店長に送るLINEのマナーを教えて』と頼む",
+            "illustration": null,
+            "timeCost": 15,
+            "resourceCost": 20,
+            "quality": 15,
+            "result": "マナーの説明を読むのに時間がかかり、文章の調整に取りかかるのが遅くなった。",
+            "explanation": "マナーを学びたいときには役立つ一方、今ある文を少し直す目的では、読む量や処理が増えることもある。"
+          }
+        ]
+      },
+      {
+        "title": "代替案の提示",
+        "illustration": null,
+        "situation": "ただ断るだけじゃなく、『別の日のシフトなら入れます』と気遣いの一言を添えたい…",
+        "choices": [
+          {
+            "text": "自分のカレンダーアプリを見て、入れる日時をそのまま手打ちで追記する",
+            "illustration": null,
+            "timeCost": 3,
+            "resourceCost": 0,
+            "quality": 35,
+            "result": "入れる欠員日を追記して送信。店長からも「助かる！」と返事が来た！",
+            "explanation": "自分の予定がわかっているときは、カレンダーを見て直接追記する方法で短時間に伝えられる。"
+          },
+          {
+            "text": "AIに『フォローとして別の欠員日入る旨を伝える文章を追加して』と頼む",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 10,
+            "quality": 20,
+            "result": "文はきれいに整ったが、自分の予定を後から入力し直した。",
+            "explanation": "表現を整える補助にはなる一方、入れる日時の確認と入力は別に必要だった。"
+          },
+          {
+            "text": "AIに『今週の自分の予定を教えるから、欠員日と合う日を出して返信文作って』と頼む",
+            "illustration": null,
+            "timeCost": 20,
+            "resourceCost": 35,
+            "quality": 15,
+            "result": "長いスケジュールの入力と解析で、返信文が出るまで時間がかかった。",
+            "explanation": "日程整理を任せられる一方、予定を入力し、結果を確認する作業もある。今回の調整の規模に合うか考えたい。"
+          }
+        ]
+      },
+      {
+        "title": "完了後",
+        "illustration": null,
+        "situation": "送信完了！無事に断れてスッキリ。AIチャットの画面はどうする？（ここではAIチャットを開いている場面として選んでください。）",
+        "choices": [
+          {
+            "text": "お礼は送らず、そのまま閉じる",
+            "illustration": null,
+            "timeCost": 0,
+            "resourceCost": 0,
+            "quality": 0,
+            "result": "作業を終え、次のことにすぐ取りかかれた！",
+            "explanation": "会話をここで終えると、追加の応答生成は発生しない。すでにできた成果物の品質は変わらない。"
+          },
+          {
+            "text": "「ありがとう！」とだけ送信する",
+            "illustration": null,
+            "timeCost": 2,
+            "resourceCost": 10,
+            "quality": 0,
+            "result": "AIから「どういたしまして！課題頑張ってくださいね！」と返答が来た。",
+            "explanation": "感謝を伝えて区切りをつける選択。返答の生成にも処理が伴うが、完成した成果物の品質は変わらない。"
+          },
+          {
+            "text": "「神！一瞬で解決した！AI最高！」とスタンプ感覚で褒める",
+            "illustration": null,
+            "timeCost": 3,
+            "resourceCost": 20,
+            "quality": 0,
+            "result": "AIが温かい言葉で返してくれて、ほっとした。",
+            "explanation": "温かいやり取りで気持ちが満たされることもある。一方で追加の生成処理が発生し、完成した成果物の品質は変わらない。"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "travel",
+    "title": "女子旅のプランを考え中！効率よく観光地やおしゃれカフェを回れる計画を立てよう",
+    "illustration": null,
+    "intro": "週末に友達と行く女子旅！行きたいカフェも観光地もたくさんあって迷っちゃう…！",
+    "steps": [
+      {
+        "title": "アイデア出し",
+        "illustration": null,
+        "situation": "どこに行くか大まかなテーマが決まらない…どうやって決める？",
+        "choices": [
+          {
+            "text": "Instagramで「〇〇女子旅」とひたすらスクロールして探す",
+            "illustration": null,
+            "timeCost": 30,
+            "resourceCost": 2,
+            "quality": 15,
+            "result": "気づいたら1時間以上、スクロールして動画を見ていた。",
+            "explanation": "写真や動画から雰囲気をつかめる一方、候補が多く、探す時間が長くなることもある。"
+          },
+          {
+            "text": "AIに『〇〇エリアで女子大生におすすめの旅行テーマ（カフェ巡りなど）を箇条書き提案して』と頼む",
+            "illustration": null,
+            "timeCost": 3,
+            "resourceCost": 10,
+            "quality": 35,
+            "result": "テーマ候補が並び、旅行計画の一歩目がスムーズに進んだ！",
+            "explanation": "短いテーマ案をもらうことで、友達と相談する足がかりができる。日程全体の生成より範囲を絞った使い方。"
+          },
+          {
+            "text": "AIに『〇〇エリアで映えるモデルコースの旅日程表を教えて』と頼む",
+            "illustration": null,
+            "timeCost": 10,
+            "resourceCost": 35,
+            "quality": 10,
+            "result": "日程表はできたが、行きたいお店が入っておらず、作り直すことになった。",
+            "explanation": "全体像を得られる一方、好みや条件が定まる前に詳しい計画を作ると、手直しが増えることもある。"
+          }
+        ]
+      },
+      {
+        "title": "スポット調査",
+        "illustration": null,
+        "situation": "行きたいカフェが決定！最新の営業時間や定休日、場所を確認したい…",
+        "choices": [
+          {
+            "text": "Googleマップで店舗名で検索してピン留めする",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 2,
+            "quality": 35,
+            "result": "営業状況、写真、位置関係をまとめて確認でき、定休日もわかった！",
+            "explanation": "地図アプリは場所と営業時間を確認する手段の一つ。臨時休業などは、お店の公式発信も確認したい。"
+          },
+          {
+            "text": "AIに『〇〇カフェの最新の営業時間と定休日、おすすめメニューを教えて』と聞く",
+            "illustration": null,
+            "timeCost": 20,
+            "resourceCost": 10,
+            "quality": 10,
+            "result": "教えてもらった定休日が古く、調べ直すと行く予定の日は休みだった。",
+            "explanation": "店舗情報は変わるため、AIの回答だけでは確認が足りないこともある。今回は調べ直しに時間がかかった。"
+          },
+          {
+            "text": "AIに『Web検索機能で〇〇カフェの公式Instagramの最新投稿を要約して』と頼む",
+            "illustration": null,
+            "timeCost": 25,
+            "resourceCost": 35,
+            "quality": 15,
+            "result": "検索処理の待ち時間が長く、通信エラーで正しい情報が出なかった。",
+            "explanation": "Web検索付きAIでも、投稿にアクセスできない場合がある。検索と要約の処理に加え、直接確認する手間が生じることもある。"
+          }
+        ]
+      },
+      {
+        "title": "ルート作成",
+        "illustration": null,
+        "situation": "スポットを回る順番と移動ルートを効率よく組みたい！",
+        "choices": [
+          {
+            "text": "乗換案内アプリやGoogleマップのルート検索で移動時間を調べる",
+            "illustration": null,
+            "timeCost": 5,
+            "resourceCost": 2,
+            "quality": 30,
+            "result": "所要時間がすぐにわかり、効率よく回れるルートが完成した！",
+            "explanation": "具体的な移動時間や乗換の確認には、経路検索の専用ツールが役立つ。当日の運行状況も確認したい。"
+          },
+          {
+            "text": "AIに『AカフェからBショップを回る移動ルートと時間を教えて』と頼む",
+            "illustration": null,
+            "timeCost": 15,
+            "resourceCost": 20,
+            "quality": 15,
+            "result": "実際の電車の乗換情報がなく、結局自分で調べ直した。",
+            "explanation": "ルートの案を考える補助にはなる一方、時刻表や所要時間は専用ツールで確認する必要がある場合も。"
+          },
+          {
+            "text": "AIに『Web検索機能でAカフェからBショップまでの正確なルートと電車を調べて』と頼む",
+            "illustration": null,
+            "timeCost": 25,
+            "resourceCost": 40,
+            "quality": 10,
+            "result": "検索と解析が何度も行われ、回答まで長い待ち時間がかかった。",
+            "explanation": "複数の条件をまとめて頼める一方、検索と解析を繰り返すこともある。今回のような経路確認なら専用ツールも選択肢になる。"
+          }
+        ]
+      },
+      {
+        "title": "完了後",
+        "illustration": null,
+        "situation": "女子旅プランが完成！友達に共有しよう。AIチャットはどうする？（ここではAIチャットを開いている場面として選んでください。）",
+        "choices": [
+          {
+            "text": "お礼は送らず、そのままタブを閉じる",
+            "illustration": null,
+            "timeCost": 0,
+            "resourceCost": 0,
+            "quality": 0,
+            "result": "作業を終え、次のことにすぐ取りかかれた！",
+            "explanation": "会話をここで終えると、追加の応答生成は発生しない。すでにできた成果物の品質は変わらない。"
+          },
+          {
+            "text": "「ありがとう！」とだけ送信する",
+            "illustration": null,
+            "timeCost": 2,
+            "resourceCost": 10,
+            "quality": 0,
+            "result": "AIから「どういたしまして！」と返答が来た。",
+            "explanation": "感謝を伝えて区切りをつける選択。返答の生成にも処理が伴うが、完成した成果物の品質は変わらない。"
+          },
+          {
+            "text": "「ありがとう！また旅行の時頼むね！」と送信する",
+            "illustration": null,
+            "timeCost": 3,
+            "resourceCost": 20,
+            "quality": 0,
+            "result": "AIが温かい言葉で返してくれて、ほっとした。",
+            "explanation": "温かいやり取りで気持ちが満たされることもある。一方で追加の生成処理が発生し、完成した成果物の品質は変わらない。"
+          }
+        ]
+      }
+    ]
+  }
+];
+// ===== ゲーム内容の編集はここまで =====
+
+// 補足文と振り返りの質問。実際の電力・水の単位にポイントを換算しません。
+const disclaimer = '※各ポイントはゲーム内で比較するための仮想値です。実際の環境負荷は、AIモデル、処理内容、データセンター、地域、電源構成などによって異なります。';
+const questions = [
+ '今回、AIを使ってよかったと思った場面はどこでしたか？それはなぜですか？',
+ '逆に、AIではなく検索・専用ツール・自分自身でやってもよかったかもしれない、と思った場面はありましたか？',
+ '次にAIを使うとき、時間や便利さ以外に、どんなことを考えてみたいですか？'
+];
+const metrics = [['timeCost','TIME COST','時間消費'],['resourceCost','RESOURCE COST','資源消費'],['quality','QUALITY','品質']];
+const app = document.getElementById('app');
+const dialog = document.getElementById('restart-dialog');
+// 選択履歴から累積値を計算。画面の再描画ではポイントを加算しません。
+let sceneIndex = null;
+let stepIndex = 0;
+let phase = 'home';
+let history = [];
+const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+function totals(){return history.reduce((total,entry)=>{for(const [key] of metrics)total[key]+=scenes[sceneIndex].steps[entry.step].choices[entry.choice][key];return total;},{timeCost:0,resourceCost:0,quality:0});}
+// 各指標ごとに、そのシーンの各Stepの最大値を合計して棒の尺度にします。
+// 尺度はシーン開始時から固定。ポイントの上限やクリア条件ではありません。
+function meterMaximum(key) {
+  return scenes[sceneIndex].steps.reduce((sum, step) => sum + Math.max(...step.choices.map(choice => choice[key])), 0) || 1;
+}
+function scoreCards(values, delta=false) {
+  const hints = ['使った時間','相対的な資源消費','得られた成果'];
+  return `<div class="metrics" ${delta?'':'aria-label="累積ポイント"'}>${metrics.map(([key,en,jp],i) => {
+    const max = delta ? Math.max(1,...scenes[sceneIndex].steps[stepIndex].choices.map(choice=>choice[key])) : meterMaximum(key);
+    const percent = Math.min(100,Math.max(0,values[key]/max*100));
+    return `<div class="metric metric-${key}"><span class="en">${en}</span><span class="jp">${jp}</span><span class="hint">${hints[i]}</span><b data-score="${key}">${delta?'+':''}${values[key]}</b><small>pt</small>${delta?'':`<span class="meter" role="meter" aria-label="${jp}" aria-valuemin="0" aria-valuemax="${max}" aria-valuenow="${values[key]}" aria-valuetext="${values[key]} pt"><span class="meter-fill" style="width:${percent}%"></span></span>`}</div>`;
+  }).join('')}</div>${delta?'':'<p class="scale-note">棒は、このシーンで取り得る各指標の最大値を尺度に表示しています（目標値ではありません）。</p>'}`;
+}
+// ★ イラストを差し替える場所：上のデータのillustrationに相対パスを設定。
+// 読込完了までプレースホルダーを表示。パスが間違っていてもレイアウトを保ちます。
+function illustration(path, label, size='') {
+  return `<span class="illustration ${size}" role="img" aria-label="${escapeHTML(label)}"><span class="placeholder"><b>ILLUSTRATION</b><span>${escapeHTML(label)}</span></span>${path?`<img src="${escapeHTML(path)}" alt="${escapeHTML(label)}" hidden>`:''}</span>`;
+}
+function choiceImage(step, choice, size='thumb') {
+  return illustration(scenes[sceneIndex].steps[step].choices[choice].illustration,`SCENE ${sceneIndex+1} / STEP ${step+1} / CHOICE ${'ABC'[choice]}`,size);
+}
+function deltas(choice){return `<div class="deltas">${metrics.map(([key,en])=>`<span>${en} <b>+${choice[key]}</b> pt</span>`).join('')}</div>`;}
+function note(){return `<p class="note">${disclaimer}<br>資源消費0 ptも、現実の環境負荷がゼロという意味ではありません。結果はこの場面での一例です。</p>`;}
+function mount(html){app.innerHTML=html;
+  app.querySelectorAll('.illustration img').forEach(img=>{
+    const show=()=>{img.hidden=false;img.previousElementSibling.hidden=true;};
+    const fallback=()=>{img.hidden=true;img.previousElementSibling.hidden=false;};
+    img.addEventListener('load',show);
+    img.addEventListener('error',fallback);
+    if(img.complete){if(img.naturalWidth>0)show();else fallback();}
+  });window.scrollTo(0,0);const heading=app.querySelector('h1, h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}}
+function home(){phase='home';sceneIndex=null;stepIndex=0;history=[];mount(`
+ <p class="eyebrow">4 SCENES / EVERYDAY CHOICES</p><h1>今日も、とりあえずAI？</h1>
+ <p class="lead">レポートも、面接も、日常の連絡も。<br>いつもの選択を、時間・資源・品質から見つめてみよう。</p>
+ ${illustration(titleIllustration,'TITLE / MAIN','hero')}<h2>どの場面から始める？</h2>
+ <div class="scene-grid">${scenes.map((scene,i)=>`<button class="scene-card" data-scene="${i}"><span class="scene-no">SCENE ${i+1} / ${['レポート','面接','バイト','旅行'][i]}</span><strong>${escapeHTML(scene.title)}</strong>${illustration(scene.illustration,`SCENE ${i+1}`)}<span class="go">4 STEPをプレイする →</span></button>`).join('')}</div>
+ <section class="guide"><h3>遊び方</h3><p>各Stepで3つの方法から1つを選び、結果を読んで次へ。4 Stepを終えたらクリアです。最後に、選んだ方法と他の方法を振り返ります。</p><p><b>時間消費</b>：高いほど時間を使った<br><b>資源消費</b>：高いほどAIやデジタル処理の相対的な資源消費が大きい<br><b>品質</b>：高いほど目的に対して良い成果を得た</p><p>3つの値は0から累積します。総合点やランクはありません。何を大切にするか考えながら選んでみてください。</p></section>${note()}`);}
+function header(){const scene=scenes[sceneIndex];return `<div class="stage-top"><p class="eyebrow">SCENE ${sceneIndex+1} <span aria-hidden="true"> / </span> STEP ${stepIndex+1} / 4</p><button class="quiet" data-action="restart">シーン選択へ</button></div><p class="scene-name">${escapeHTML(scene.title)}</p><div class="hud">${scoreCards(totals())}</div><div class="progress" aria-label="${history.length} / 4 Step完了">${[0,1,2,3].map(i=>`<span class="${i<history.length?'done':''}"></span>`).join('')}</div>`;}
+// シーン選択後、導入イラストと状況を確認してから4 Stepを開始します。
+function renderIntro() {
+  phase='intro';
+  const scene=scenes[sceneIndex];
+  mount(`${header()}<p class="eyebrow">SCENE INTRODUCTION</p><h1>${escapeHTML(scene.title)}</h1>${illustration(scene.illustration,`SCENE ${sceneIndex+1} / INTRO`,'hero')}<p class="situation">${escapeHTML(scene.intro)}</p><p>4つの場面で、あなたならどうするか選んでみてください。</p><button class="primary" data-action="start">STEP 1を始める</button>${note()}`);
+}
+function renderStep(){phase='step';const scene=scenes[sceneIndex],step=scene.steps[stepIndex];mount(`${header()}<h1>${escapeHTML(step.title)}</h1>${stepIndex===0?`<p class="intro">${escapeHTML(scene.intro)}</p>`:''}<p class="situation">${escapeHTML(step.situation)}</p>${illustration(step.illustration,`SCENE ${sceneIndex+1} / STEP ${stepIndex+1}`)}<p class="eyebrow">あなたなら、どうする？</p><div class="choices">${step.choices.map((choice,i)=>`<button class="choice tone-${i}" data-choice="${i}"><span class="choice-top"><span class="letter">CHOICE ${'ABC'[i]}</span><span class="choice-text">${escapeHTML(choice.text)}</span></span>${choiceImage(stepIndex,i,'')}${deltas(choice)}</button>`).join('')}</div>${note()}`);}
+function renderFeedback(){const entry=history[history.length-1],choice=scenes[sceneIndex].steps[stepIndex].choices[entry.choice];mount(`${header()}<p class="eyebrow">STEP ${stepIndex+1} / ${escapeHTML(scenes[sceneIndex].steps[stepIndex].title)}</p><h1>選択のあとに</h1><section class="panel selected tone-${entry.choice}"><p class="eyebrow">あなたの選択</p><h3>${escapeHTML(choice.text)}</h3>${choiceImage(stepIndex,entry.choice)}<p class="label">今回の変化</p>${scoreCards(choice,true)}<p class="label">RESULT</p><p>${escapeHTML(choice.result)}</p><div class="point"><p class="eyebrow">POINT</p><p>${escapeHTML(choice.explanation)}</p></div></section><button class="primary" data-action="next">${stepIndex===3?'次へ：今日の選択を振り返る':'次へ：STEP '+(stepIndex+2)}</button>${note()}`);}
+function renderLog(){phase='log';mount(`${header()}<p class="eyebrow">YOUR CHOICES / 振り返り 1 / 3</p><h1>自分の選択の振り返り</h1><p class="lead">4 Stepをクリアしました。時間・資源・品質の違いと、あなたが選んだ理由を振り返ってみましょう。</p><div class="log">${history.map(entry=>{const step=scenes[sceneIndex].steps[entry.step],choice=step.choices[entry.choice];return `<article class="panel log-card selected tone-${entry.choice}"><p class="eyebrow">STEP ${entry.step+1}</p><h2>${escapeHTML(step.title)}</h2><p class="label">あなたの選択</p><h3>${escapeHTML(choice.text)}</h3>${choiceImage(entry.step,entry.choice)}${deltas(choice)}<p class="label">RESULT</p><p>${escapeHTML(choice.result)}</p><div class="point"><p class="eyebrow">POINT</p><p>${escapeHTML(choice.explanation)}</p></div><details><summary>他の選択肢を見る</summary>${step.choices.map((other,i)=>i===entry.choice?'':`<section class="alternative tone-${i}"><p><b>${'ABC'[i]}　${escapeHTML(other.text)}</b></p>${choiceImage(entry.step,i)}${deltas(other)}<p class="label">RESULT</p><p>${escapeHTML(other.result)}</p></section>`).join('')}</details></article>`;}).join('')}</div>
+<button class="primary" data-action="debrief">次へ：少し立ち止まって考える</button>${note()}`);}
+// ★ Googleフォームの接続設定
+// フォームの「事前入力したリンク」から /viewform のURLとentry番号を転記します。
+// 空欄のままでもゲームは動きます。設定手順は「公開手順.md」を参照。
+const GOOGLE_FORM = {
+  url: 'https://docs.google.com/forms/d/e/1FAIpQLSd6F9O5VTr-Vfwcm7ngrQwCPPdZ1aa2L8Wg8do4G665gB5-1w/viewform',
+  fields: {
+    gameVersion: 'entry.301693721', scene: 'entry.827385708',
+    step1: 'entry.52159654', step2: 'entry.1629776297',
+    step3: 'entry.1701321786', step4: 'entry.1374748187',
+    timeCost: 'entry.1690043208', resourceCost: 'entry.904648409', quality: 'entry.1434385836'
+  }
+};
+const GAME_VERSION = '2026-09-25-pages-v1';
+
+// フォームに渡すのは短い履歴のみ。自由記述はフォーム側で記入します。
+function formValues() {
+  const scene = scenes[sceneIndex];
+  const values = {gameVersion: GAME_VERSION, scene: scene.id + ' / ' + scene.title, ...totals()};
+  history.forEach(entry => {
+    const step = scene.steps[entry.step];
+    values['step' + (entry.step + 1)] = 'CHOICE ' + 'ABC'[entry.choice] + ' / ' + step.choices[entry.choice].text;
+  });
+  return values;
+}
+function formReady() {
+  // 短縮URLでは事前入力の設定ができないので、通常の公開フォームURLを使います。
+  const keys = ['gameVersion','scene','step1','step2','step3','step4','timeCost','resourceCost','quality'];
+  const ids = keys.map(key => GOOGLE_FORM.fields[key]);
+  return /^https:\/\/docs\.google\.com\/forms\/(?:u\/\d+\/)?d\/(?:e\/)?[A-Za-z0-9_-]+\/viewform$/.test(GOOGLE_FORM.url)
+    && ids.every(id => /^entry\.\d+$/.test(id)) && new Set(ids).size === keys.length;
+}
+function googleFormLink() {
+  if (!formReady() || history.length !== 4) return '';
+  const values = formValues();
+  const params = ['usp=pp_url'];
+  for (const key of Object.keys(values)) {
+    params.push(encodeURIComponent(GOOGLE_FORM.fields[key]) + '=' + encodeURIComponent(String(values[key])));
+  }
+  return GOOGLE_FORM.url + '?' + params.join('&');
+}
+function reviewHeader(page) {
+  return `<p class="eyebrow">SCENE ${sceneIndex+1} / 振り返り ${page} / 3</p>`;
+}
+function renderDebrief() {
+  phase='debrief';
+  const link = googleFormLink();
+  mount(`${reviewHeader(2)}<h1>少し立ち止まって考える</h1>
+  <section class="panel debrief"><p>次の3つの問いを振り返ってみましょう。回答はGoogleフォームで記入します。参加・回答は任意です。自由記述には氏名や連絡先を記入しないでください。</p>
+  ${questions.map((q,i)=>`<p class="reflection-question"><span class="qno">Q${i+1}</span>${escapeHTML(q)}</p>`).join('')}
+  <p>フォームには、今回のシーン・4 Stepの選択・最終ポイント・ゲームのバージョンが入力済みで表示されます。内容を確認し、振り返りを記入して「送信」を押してください。</p>
+  ${link ? `<a class="primary form-link" href="${escapeHTML(link)}" target="_blank" rel="noopener noreferrer">選択履歴を引き継いでGoogleフォームへ ↗</a><p class="note">別タブで開きます。回答後はこのゲームのタブに戻って、次へ進んでください。</p>` : '<button class="primary" disabled>回答フォームは準備中です</button><p role="status">今は回答を収集していません。そのまま次へ進めます。</p>'}
+  <p class="note">フォームを開くだけでは回答は保存されません。ゲーム側では送信完了を確認できません。フォームで送信が完了したことをご確認ください。</p>
+  </section>
+  <button class="secondary" data-action="back-log">自分の選択の振り返りに戻る</button>
+  <button class="primary" data-action="closing">次へ：目的に合わせて、使い分ける</button>`);
+}
+function renderClosing(){phase='closing';mount(`${reviewHeader(3)}
+ <section class="closing"><h1>目的に合わせて、使い分ける</h1><p>生成AIは、考えを広げたり、文章を整えたり、練習相手になったりできる便利な道具です。一方で、AIを動かすためにも電力や水などの資源が使われています。</p><p>すべてをAIに任せればよいわけでも、すべてを自分だけでやればよいわけでもありません。</p><p>「ここはAIに助けてもらう」<br>「ここは検索や専用ツールを使う」<br>「ここは自分で考えてみる」</p><p>目的に合わせて使い分けることも、これからのAIリテラシーの一つかもしれません。AIの便利さを活かしながら、資源やエネルギーにも目を向け、自分自身で考える力も育てていく。</p><p class="question">あなたなら、次はどうAIを使いますか？</p></section>
+ <details class="environment"><summary>AIと資源消費について</summary><ul><li>生成AIの利用には、データセンターでの電力消費が伴います。</li><li>サーバーの冷却や発電などを通して、水利用とも関係しています。</li><li>負荷は、AIモデル、処理内容、設備、地域、電源構成などによって異なります。</li><li>1回のAI利用について、ユーザーが正確な環境負荷を知るのは難しいのが現状です。</li><li>利用者の使い方に加え、企業による環境負荷データの公開や、負荷を減らす努力も重要です。</li></ul><p class="note">参考：学生作成「卒論研究メモ」。このゲームのRESOURCE COSTは、実際の電力量や水の量を示すものではありません。</p></details>${note()}<button class="secondary" data-action="back-debrief">回答画面に戻る</button><button class="primary" data-action="restart">シーン選択に戻る・もう一度遊ぶ</button>`);}
+// 画面状態を確かめてから処理し、同じStepの重複加算を防ぎます。
+app.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;
+ if(button.dataset.scene!==undefined&&phase==='home'){sceneIndex=Number(button.dataset.scene);stepIndex=0;history=[];renderIntro();}
+ else if(button.dataset.action==='start'&&phase==='intro'){renderStep();}
+ else if(button.dataset.choice!==undefined&&phase==='step'){phase='feedback';history.push({step:stepIndex,choice:Number(button.dataset.choice)});renderFeedback();}
+ else if(button.dataset.action==='next'&&phase==='feedback'){if(stepIndex===3)renderLog();else{stepIndex++;renderStep();}}
+ else if(button.dataset.action==='debrief'&&phase==='log')renderDebrief();
+ else if(button.dataset.action==='back-log'&&phase==='debrief')renderLog();
+ else if(button.dataset.action==='closing'&&phase==='debrief')renderClosing();
+ else if(button.dataset.action==='back-debrief'&&phase==='closing')renderDebrief();
+ else if(button.dataset.action==='restart')dialog.showModal();
+});
+document.getElementById('cancel-restart').addEventListener('click',()=>dialog.close());
+document.getElementById('confirm-restart').addEventListener('click',()=>{dialog.close();home();});
+home();
+</script>
+</body>
+</html>
